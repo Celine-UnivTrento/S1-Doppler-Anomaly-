@@ -10,6 +10,7 @@ function fill_gap_several_points_inavector, vector
   n_vector = n_elements(vector)
 
   for i_disc =0L, n_disc -1 do begin      
+  
     if q[p_disc[i_disc]] lt n_vector/4 then begin     
       poly_deg = poly_fit([p[p_disc[i_disc]+1],p[p_disc[i_disc]] ], [vector[p[p_disc[i_disc]+1]], vector[p[p_disc[i_disc]]]], 1)
       long_disc = p[p_disc[i_disc]+1]-p[p_disc[i_disc]]+1
