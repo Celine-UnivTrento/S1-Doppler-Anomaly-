@@ -11,8 +11,8 @@ function improv_prof_via_deriv, prof, periode
   if p[0] eq -1 or periode eq 0 or n_elements(p) le 3  then return, prof
   p =-1
   
-  cc_reg = 0.85;0.85
-  cc_fai = 0.75;0.75
+  cc_reg = 0.85
+  cc_fai = 0.75
   
   affi = 0
   
@@ -123,7 +123,7 @@ function improv_prof_via_deriv, prof, periode
       if affi then print, 'ccp decal > cc_reg '
       if p[0] ne -1 and affi then print, ind_1[p]
       p=-1      
-    endif ;else print, 'C''est quoi ce border ?!'
+    endif 
     
   endfor
   
@@ -216,11 +216,6 @@ function improv_prof_via_deriv, prof, periode
   if pn[0] ne -1 then min_deriv_unif = min(deriv_unif[pn]) else min_deriv_unif = 0
   if pn[0] ne -1 then max_deriv_unif = max(deriv_unif[pn]) else max_deriv_unif = 0
   
-  ;deriv_unif = fill_gap_one_point_inavector(deriv_unif)
-  ;for ii = periode, nazim-1-periode do begin ;
-  ;	if abs(deriv_unif[ii]-deriv_unif[ii-periode]) gt min_deriv and abs(deriv_unif[ii]-deriv_unif[ii+periode]) gt min_deriv then deriv_unif[ii] = (deriv_unif[[ii]-periode]+deriv_unif[ii+periode])/2
-  ; endfor
-  
   pz = where(deriv_unif eq 0)
   pn = where(deriv_unif ne 0)
   deriv_unif_smooth = fltarr(nazim)
@@ -231,15 +226,6 @@ function improv_prof_via_deriv, prof, periode
   ;; continuite de l'integrale
   disc = pn-shift(pn, -1)
   qq = where(abs(disc) gt 1)
-  
-  ;; attention la periode n'est pas vraiment constante le long de l'azimut.... on ne peut pas utiliser une derivee ideale à partir de la periode
-  ;moy_deriv = fltarr(periode)
-  ;for ip=0L, periode-1 do begin
-  ;  pp = where(deriv_unif[  ip:(nazim-1):periode] ne 0 and abs(prof[ ip:(nazim-1):periode]) gt 0.000001 )
-  ;  if pp[0] ne -1 then moy_deriv[ip] = mean((deriv_unif[  ip:(nazim-1):periode])[pp]) else stop
-  ;endfor
-  ;	moy_deriv_long = fltarr(nazim)
-  ;	for ip = 0L, nb_periode-1 do moy_deriv_long[ip*periode:(ip+1)*periode-1]=moy_deriv[*]
   
   integral = fltarr(nazim)
   if pn[0] ne -1 and qq[0] ne -1 then begin
@@ -262,7 +248,6 @@ function improv_prof_via_deriv, prof, periode
   
   p = where(integral ne 0 and prof ne 0 and deriv_prof lt max_deriv_unif and deriv_prof gt min_deriv_unif)
   if p[0] ne -1  then const_integration = mean(integral[p] - prof[p]) else const_integration = 0
-  ;print, const_integration
   p=-1
   
   test = fltarr(nazim)
@@ -274,40 +259,16 @@ function improv_prof_via_deriv, prof, periode
   if p[0] ne -1 then begin
     for ii = 0, n_elements(p)-1 do begin
       test[p[ii]] = integral[p[ii]] -const_integration
-    ;if p[ii] ge 0 and p[ii] lt nazim-2 then begin
-    ;if deriv_unif_smooth[p[ii]] ne 0 then test[p[ii]+1] = deriv_unif_smooth[p[ii]]+test[p[ii]]
-    ;endif
-      
-    ;if p[ii] le nazim and p[ii] gt 0 then begin
-      
-    ;if deriv_unif_smooth[p[ii]] ne 0 then test[p[ii]-1] = test[p[ii]]-deriv_unif_smooth[p[ii]]
-    ;endif
+    
     endfor
   endif
   
   prof_new = prof*0
-  p = where( prof ne 0 and deriv_prof eq deriv_unif); abs(integral-prof) lt 0.5)
+  p = where( prof ne 0 and deriv_prof eq deriv_unif)
   if p[0] ne -1 then prof_new[p] = prof[p]
-  p = where( integral ne 0 and ( prof eq 0 or abs(deriv_prof-deriv_unif) gt 0.0001) ););abs(integral-prof) ge 0.5) )
+  p = where( integral ne 0 and ( prof eq 0 or abs(deriv_prof-deriv_unif) gt 0.0001) )
   if p[0] ne -1 then prof_new[p] = integral[p]-const_integration
   p = -1
-  
-;  window, 6
-;  plot, deriv_prof, col=-1, back=0, ytitle='Deriv profil', psym=-1
-;  ;oplot, smooth(deriv(prof[ *]),3), col=200
-;  oplot, deriv_unif, col=100, psym=-1
-;  ;oplot, deriv(prof_new), col= 200
-;  ;oplot, moy_deriv_long, col=100
-;  
-;  window,5
-;  plot, prof, col=-1, back=0, ytitle='profil initial'
-;  ; oplot, smooth(prof[ *],3), col=50
-;  oplot, integral-const_integration, col=100
-;  oplot, prof_new, col=200, thick=2
-;  ;oplot, test, col=240
-;  
-;  stop
-;  
   
   return, prof_new
   

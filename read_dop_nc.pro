@@ -1,11 +1,11 @@
 
 ;; procedure read_dop_nc
 ;;    read the OCN-RVL file from SENTINEL-1A and B 
-;;    unbiased the Doppler anomaly
-;;    ENTREE : - but the data directory has to be specified at the
+;;    unbias the Doppler anomaly
+;;    INPUT : - but the data directory has to be specified at the
 ;;               first line. data are supposed to be in the OCN*.SAFE format 
-;;    SORTIE : fichiers tif, fichiers png
-;;    Auteurs :C. Danilo, juin 2018
+;;    OUTPUT : fichiers tif, fichiers png
+;;    Author :C. Danilo, juin 2018
 ;;
 ;;    1 - Plot the Wind information l.68
 ;;    2 - First step correction : calculation of azimuthal profile l.125
@@ -19,14 +19,13 @@
 
 pro read_dop_nc
   
-  dir = '/home/celine/DATA/OCN_Gibraltar/' 
-  print, 'Youououou !!!!!!!!'
-  date=''
+  dir = 'name_of_your_directory';; directory where are SAFE files
+  date = '' ;; initialisation of date to an empty string
   
   dirocn = file_search(dir+'*OCN*'+date+'*.SAFE')
   
   nb_ocn = n_elements(dirocn)
-  print, 'Nb of OCN files :', nb_ocn
+  print, 'Nb of OCN files :', nb_ocn, dir
   
   wrange=[0,20]
   nrange=[-10,-1]
@@ -48,8 +47,7 @@ pro read_dop_nc
   
   suf ='_0'
 
-  ;;for i_ocn =0L,  nb_ocn-1 do begin
-  for i_ocn =26L, 30 do begin
+  for i_ocn =0L,  nb_ocn-1 do begin
     info_safe = read_safe_s1(dirocn[i_ocn])
     status = -1
     
@@ -273,11 +271,11 @@ pro read_dop_nc
 
                 oplot, rvl_azim_terre_smooth[iim, *], psym=-2, col=50
 	              
-              endif else print, 'Pas de pts commun entre azim_terre nul et azim_mer non nul.'
+              endif else print, 'No commune points between  azim_terre nul and azim_mer no nul.'
               p_mer_plus = -1
               p_mer = -1
             endif else begin
-              print, 'Variation trop forte entre terre et mer (STD diff, STD NRCS (composante commune), STD NRCS (composante mer))', $
+              print, 'Strong variations between land and sea (STD diff, STD NRCS (composante commune), STD NRCS (composante sea))', $
                 stddev(diff_rvl_terre_mer[p]), stddev(alog(nrcs_azim_mer_smooth[iim, p])),stddev(alog(nrcs_azim_mer_smooth[iim, p_mer]))
                 
               window, 2
@@ -286,7 +284,7 @@ pro read_dop_nc
               
             endelse            
             p = -1
-          endif else print, 'pas de valeurs communes entre les profils terre et mer'
+          endif else print, 'No commune values between land and sea profiles'
         
         endif
         
@@ -346,7 +344,7 @@ pro read_dop_nc
           
       endif else begin  
       
-         print, ' No ground reference - USe of the maritime component '        
+         print, ' No ground reference - Use the maritime component '        
          ref_terre = 0
          for iim = 0L, nbwin-1 do $
             for kim = 0L, nazim-1 do begin
@@ -984,10 +982,10 @@ pro read_dop_nc
      endif
       p=-1
       
-  endif else print, 'Pb wavec le fichier'   
-      endif else print, 'STATUS fichier netcdf pas bon', status
+  endif else print, 'Pb with file SAFE'   
+      endif else print, 'STATUS netcdf file - no good', status
   
-   endif else print,'Pas de fichier sain en ',dirocn[i_ocn]
+   endif else print,'No safe file in ', dirocn[i_ocn]
         
  endfor
 

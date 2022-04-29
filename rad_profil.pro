@@ -1,8 +1,7 @@
 function rad_profil, array, flag_array, flag_value, array_def_val, ancilla_array, min_nrcs = min_nrcs, max_nrcs = max_nrcs
 
   ss =size(array)
-  ;array_def_val = -999.00
-  
+    
   nrad = ss[1]
   nazim = ss[2]
   
@@ -40,9 +39,6 @@ function rad_profil, array, flag_array, flag_value, array_def_val, ancilla_array
         mean_radvelec    = median(array[ p , kim ])
         std_radvelec     = stddev(array[ p , kim ])
         
-        ;p_calcul_dopt =  where(flag_array[ *,kim] eq flag_value and $
-        ;  abs(ancilla_array[*,kim]-median_nrcs[kim]) lt std_nrcs[kim]*2 and $
-        ;  array[ *, kim] ne 0. )
         p_calcul_dopt =  where(flag_array[ *,kim] eq flag_value and $
           abs(ancilla_array[*,kim]-median_nrcs[kim]) lt std_nrcs[kim]*1. and $
           abs(array[*,kim]-mean_radvelec) lt std_radvelec*1. )  
@@ -51,11 +47,6 @@ function rad_profil, array, flag_array, flag_value, array_def_val, ancilla_array
           rad_prof[ kim] = median(array[ p_calcul_dopt, kim ])
           rad_prof_num[ kim] = n_elements(p_calcul_dopt)
           rad_prof_std[ kim] = stddev(array[p_calcul_dopt, kim ])
-          
-;          if abs(mean_radvelec - rad_prof[kim]) gt 0.2 then begin
-;            print, mean_radvelec , rad_prof[kim], n_elements(p_calcul_dopt), n_elements(p)
-;            stop
-;          endif
           
         endif
         

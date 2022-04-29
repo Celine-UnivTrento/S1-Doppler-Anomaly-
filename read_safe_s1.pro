@@ -1,7 +1,7 @@
 
 ;; read_safe_s1
 ;;    read the S1 format
-;;    INPUT : SAFE file
+;;    INPUT : SAFE directory
 ;;    OUTPUT : following information on the file :
 ;;              file: filef, nb_file:nb_file, lut_sigma:a.lut_sigma, geo_loc_grid:a.geo_loc_grid, $
 ;;              mission:a.mission, product:a.product, polar:a.polar, $
@@ -66,9 +66,9 @@ function read_safe_s1, dir
         endif
       ENDWHILE
       if not(quiet) then begin
-        print,  '    Famille du capteur : ', capteur_famille+' '+capteur_number
-        print,  '    Information en plus : ', platform_extension_name
-        print,  '     - - champ associés :', platform_extension
+        print,  '    Sensor family : ', capteur_famille+' '+capteur_number
+        print,  '    More Info : ', platform_extension_name
+        print,  '     -- associated field :', platform_extension
       endif
       
     endif
@@ -97,8 +97,8 @@ function read_safe_s1, dir
         READF, lun, str
       ENDWHILE
       if not(quiet) then begin
-        print,'    Information en plus : ', orbit_extension_name
-        print,'     - - champ associés :', orbit_extension
+        print,'    More Information : ', orbit_extension_name
+        print,'     - - associated field :', orbit_extension
       endif
     endif
     
@@ -119,8 +119,8 @@ function read_safe_s1, dir
         READF, lun, str
       ENDWHILE
       if not(quiet) then begin
-        print, '    Information en plus : ', geneprodinfo_extension_name
-        print, '     - - champ associés :', geneprodinfo_extension
+        print, '    More Information : ', geneprodinfo_extension_name
+        print, '     - - associated field :', geneprodinfo_extension
       endif
     endif
     
@@ -166,7 +166,7 @@ function read_safe_s1, dir
         READF, lun, str
       ENDWHILE
       
-      if not(quiet) then print, '    Fichiers dependants a l''acquisition : ', file_loc
+      if not(quiet) then print, '    Files associated to : ', file_loc
       
     endif
     
@@ -221,13 +221,13 @@ function read_safe_s1, dir
         endif
         
       endif else begin
-        print, 'Fichier lu mais pas fichier tiff'
+        print, 'File readed but no tiff file'
         return,{file: file_tiff, check:1, product:geneprodinfo_extension[8], $
           mode:platform_extension[1], swath:orbit_extension[1], starttime:start_time, stoptime:stop_time}
       ENDelse
       
     endif else begin
-      print, 'Erreur lecture de fichier'
+      print, 'Error readinf the file'
       print, file_tiff
       return,{check: 0}
     endelse
